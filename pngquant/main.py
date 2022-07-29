@@ -51,7 +51,7 @@ class PngQuant(object):
             quant_file=self.quant_file,
             min_quality=self.min_quality,
             max_quality=self.max_quality,
-            speed = self.speed,
+            speed=self.speed,
             tmp_file=self.tmp_file,
         )
 
@@ -71,12 +71,24 @@ class PngQuant(object):
         self.ndeep = 100
         self.ndigits = 4
         self.speed = 3
-        self.tmp_file = os.path.join(tempfile.gettempdir(), '{0}.quant.tmp.png'.format(uuid.uuid4().hex))
+        self.tmp_file = None
         self.command_line = self.set_command_line()
         # Error Description
         self.err_data = 'data not found'
         self.err_image = 'image not found'
         self.err_pngquant = 'pngquant not found'
+
+    @staticmethod
+    def generate_tmp_file():
+        return os.path.join(tempfile.gettempdir(), '{0}.quant.tmp.png'.format(uuid.uuid4().hex))
+
+    @property
+    def tmp_file(self):
+        return self._tmp_file or self.generate_tmp_file()
+
+    @tmp_file.setter
+    def tmp_file(self, tmp_file):
+        self._tmp_file = tmp_file
 
     def config(self, quant_file=None, min_quality=None, max_quality=None, ndeep=None, ndigits=None, tmp_file=None, speed=None):
         """
@@ -96,7 +108,7 @@ class PngQuant(object):
         self.ndeep = ndeep or self.ndeep
         self.ndigits = ndigits or self.ndigits
         self.speed = speed or self.speed
-        self.tmp_file = tmp_file or self.tmp_file
+        self.tmp_file = tmp_file
         self.command_line = self.set_command_line()
         return {
             'quant_file': self.quant_file,
